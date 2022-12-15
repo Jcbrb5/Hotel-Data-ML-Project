@@ -4,6 +4,8 @@ import statistics as stat
 import numpy as np
 from sklearn.metrics import r2_score
 from statistics import mean
+from tensorflow import keras
+
 
 hb = pd.read_csv("hotel_bookings.csv")
 
@@ -61,6 +63,32 @@ polyreg2 = np.poly1d(np.polyfit(cltc, cadrc, 5))
 line = np.linspace(1, 700, 100)
 
 fig, ax = plt.subplots()
+ax = plt.scatter(cltr, cadrr, s=5, label='Resort Hotels')
+ax = plt.scatter(cltc, cadrc, color='r', s=5, label='City Hotels')
+ax = plt.plot(line, polyreg1(line), c='b')
+ax = plt.plot(line, polyreg2(line), c='r')
+ax = plt.ylim([0, 250])
+ax = plt.title("Lead time vs ADR with Regression Line")
+ax = plt.xlabel("Lead Time")
+ax = plt.ylabel("Average Daily Rate (ADR)")
+ax = plt.legend()
+plt.show()
+
+print('Resort regression equation: \n', polyreg1)
+print('City regression equation: \n', polyreg2)
+print('r^2 Score: ', r2_score(cltr, polyreg1(cadrr)), r2_score(cltc, polyreg2(cadrc)))
+
+lead1 = hb1["lead_time"]
+adr1 = hb1["adr"]
+polyreg1 = np.poly1d(np.polyfit(adr1, lead1, 20))
+
+lead2 = hb2["lead_time"]
+adr2 = hb2["adr"]
+polyreg2 = np.poly1d(np.polyfit(adr2, lead2, 20))
+
+line = np.linspace(1, 500, 100000)
+
+fig, ax = plt.subplots()
 ax = plt.scatter(cltr, cadrr, s=5)
 ax = plt.scatter(cltc, cadrc, color='r', s=5)
 ax = plt.plot(line, polyreg1(line), c='black')
@@ -73,167 +101,121 @@ for i in range(10):
     polyreg2 = np.poly1d(np.polyfit(cltc, cadrc, i+1))
     print(i+1, "degree polynomial R2 score:", r2_score(cltr, polyreg1(cadrr)), r2_score(cltc, polyreg2(cadrc)))
 
-# lead1 = hb1["lead_time"]
-# adr1 = hb1["adr"]
-# polyreg1 = np.poly1d(np.polyfit(adr1, lead1, 20))
-#
-# lead2 = hb2["lead_time"]
-# adr2 = hb2["adr"]
-# polyreg2 = np.poly1d(np.polyfit(adr2, lead2, 20))
-#
-# line = np.linspace(1, 500, 100000)
-#
-# fig, ax = plt.subplots()
-# ax = plt.plot(line, polyreg1(line), c='black')
-# ax = plt.scatter(adr1, lead1, s=5)
-# ax = plt.xlim([0, 600])
-# ax = plt.ylim([0, 700])
-# ax = plt.title("ADR vs Lead time for Resort Hotels with regression")
-# ax = plt.xlabel("Average Daily Rate (ADR)")
-# ax = plt.ylabel("Lead Time")
-#
-# plt.show()
-#
-# fig, ax = plt.subplots()
-# ax = plt.plot(line, polyreg2(line), c='black')
-# ax = plt.scatter(adr2, lead2, s=5)
-# ax = plt.xlim([0, 600])
-# ax = plt.ylim([0, 700])
-# ax = plt.title("ADR vs Lead time for City Hotels with regression")
-# ax = plt.xlabel("Average Daily Rate (ADR)")
-# ax = plt.ylabel("Lead Time")
-# plt.show()
-#
-# print(r2_score(lead1, polyreg1(adr1)), r2_score(lead2, polyreg2(adr2)))
-#
-# lead0 = []
-# adr0 = []
-# lead2s = []
-# adr2s = []
-# lead15 = []
-# adr15 = []
-# lead31 = []
-# adr31 = []
-# lead61 = []
-# adr61 = []
-# lead91 = []
-# adr91 = []
-# lead131 = []
-# adr131 = []
-# lead181 = []
-# adr181 = []
-# lead271 = []
-# adr271 = []
-# lead361 = []
-# adr361 = []
-#
-#
-# for i in range(lead1.size):
-#     if lead1[i] < 2:
-#         lead0.append(lead1[i])
-#         adr0.append(adr1[i])
-#     elif lead1[i] < 15:
-#         lead2s.append(lead1[i])
-#         adr2s.append(adr1[i])
-#     elif lead1[i] < 31:
-#         lead15.append(lead1[i])
-#         adr15.append(adr1[i])
-#     elif lead1[i] < 61:
-#         lead31.append(lead1[i])
-#         adr31.append(lead1[i])
-#     elif lead1[i] < 91:
-#         lead61.append(lead1[i])
-#         adr61.append(adr1[i])
-#     elif lead1[i] < 131:
-#         lead91.append(lead1[i])
-#         adr91.append(adr1[i])
-#     elif lead1[i] < 181:
-#         lead131.append(lead1[i])
-#         adr131.append(adr1[i])
-#     elif lead1[i] < 271:
-#         lead181.append(lead1[i])
-#         adr181.append(adr1[i])
-#     elif lead1[i] < 361:
-#         lead271.append(lead1[i])
-#         adr271.append(adr1[i])
-#     else:
-#         lead361.append(lead1[i])
-#         adr361.append(adr1[i])
-#
-#
-# medianadr1 = [stat.median(adr0), stat.median(adr2s), stat.median(adr15), stat.median(adr31), stat.median(adr61),
-#               stat.median(adr91), stat.median(adr131), stat.median(adr181), stat.median(adr271), stat.median(adr361)]
-#
-# lead0 = []
-# adr0 = []
-# lead2s = []
-# adr2s = []
-# lead15 = []
-# adr15 = []
-# lead31 = []
-# adr31 = []
-# lead61 = []
-# adr61 = []
-# lead91 = []
-# adr91 = []
-# lead131 = []
-# adr131 = []
-# lead181 = []
-# adr181 = []
-# lead271 = []
-# adr271 = []
-# lead361 = []
-# adr361 = []
-#
-#
-# for i in np.arange(lead1.size, lead1.size + lead2.size, 1):
-#     if lead2[i] < 2:
-#         lead0.append(lead2[i])
-#         adr0.append(adr2[i])
-#     elif lead2[i] < 25:
-#         lead2s.append(lead2[i])
-#         adr2s.append(adr2[i])
-#     elif lead2[i] < 31:
-#         lead15.append(lead2[i])
-#         adr15.append(adr2[i])
-#     elif lead2[i] < 61:
-#         lead31.append(lead2[i])
-#         adr31.append(lead2[i])
-#     elif lead2[i] < 91:
-#         lead61.append(lead2[i])
-#         adr61.append(adr2[i])
-#     elif lead2[i] < 131:
-#         lead91.append(lead2[i])
-#         adr91.append(adr2[i])
-#     elif lead2[i] < 181:
-#         lead131.append(lead2[i])
-#         adr131.append(adr2[i])
-#     elif lead2[i] < 271:
-#         lead181.append(lead2[i])
-#         adr181.append(adr2[i])
-#     elif lead2[i] < 361:
-#         lead271.append(lead2[i])
-#         adr271.append(adr2[i])
-#     else:
-#         lead361.append(lead2[i])
-#         adr361.append(adr2[i])
-#
-#
-# medianadr2 = [stat.median(adr0), stat.median(adr2s), stat.median(adr15), stat.median(adr31), stat.median(adr61),
-#               stat.median(adr91), stat.median(adr131), stat.median(adr181), stat.median(adr271), stat.median(adr361)]
-#
-# adrlabel = ['0-1 days', '2-14 days', '15-30 days', '31-60 days', '61-90 days', '91-130 days', '131-180 days', '181-270 days', '271-360 days', '>360 days']
-#
-# x = np.arange(0, 30, 3)
-#
-# fig, ax = plt.subplots()
-# ax.bar(x-0.4, medianadr1, label='Resort Hotels', width=.8)
-# ax.bar(x+0.4, medianadr2, label='City Hotels', width=.8)
-# ax.set_xticks(x, labels=adrlabel, fontsize=5)
-# ax.set_ylabel('Median ADR')
-# ax.set_title("Median ADR for range of lead times")
-# ax.legend()
-# plt.show()
+# Neural Network
+
+# Formatting Data
+cancelled = ['is_canceled']
+variables = ['lead_time', 'arrival_date_year', 'arrival_date_week_number', 'arrival_date_day_of_month',
+             'stays_in_weekend_nights', 'stays_in_week_nights', 'adults', 'children', 'babies',
+             'is_repeated_guest', 'previous_cancellations', 'previous_bookings_not_canceled',
+             'booking_changes', 'agent', 'company', 'days_in_waiting_list', 'adr', 'required_car_parking_spaces',
+             'total_of_special_requests']
+
+x = hb[variables].values
+y = hb[cancelled].values
+
+from sklearn.preprocessing import StandardScaler
+PredictorScaler = StandardScaler()
+
+PredictorScalerFit = PredictorScaler.fit(x)
+
+x = PredictorScalerFit.transform(x)
+
+from sklearn.model_selection import KFold
+
+cv = KFold(n_splits=5)
+
+model = keras.Sequential()
+
+neurons = [5, 10, 15, 20, 30]
+
+num = -1
+
+# K-Fold CV enumeration for optimal neurons and layers
+for train, test in cv.split(x):
+    num += 1
+    x_train = []
+    y_train = []
+    x_test = []
+    y_test = []
+
+    for i in train:
+        x_train.append(x[i])
+        y_train.append(y[i])
+
+    for i in test:
+        x_test.append(x[i])
+        y_test.append(y[i])
+
+    model.add(keras.layers.Dense(20, input_dim=19, activation='relu'))
+    model.add(keras.layers.Dense(neurons[num], activation='relu'))
+    model.add(keras.layers.Dense(2, activation='softmax'))
+
+    x_train = np.asarray(x_train)
+    y_train = np.asarray(y_train)
+    x_test = np.asarray(x_test)
+    y_test = np.asarray(y_test)
+
+    model.compile(optimizer='adam', loss='sparse_categorical_crossentropy',
+                  metrics=['accuracy'])
+
+    model.fit(x_train, y_train, batch_size=20, epochs=4)
+    print(model.evaluate(x_test, y_test))
+
+
+from sklearn.model_selection import train_test_split
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=1)
+
+
+def FunctionFindBestParams(x_train, y_train):
+    # Defining the list of hyper parameters to try
+    TrialNumber = 0
+    batch_size_list = [5, 10, 15, 20]
+    epoch_list = [2, 5, 10, 15]
+
+    SearchResultsData = pd.DataFrame(columns=['TrialNumber', 'Parameters', 'Accuracy'])
+
+    for batch_size_trial in batch_size_list:
+        for epochs_trial in epoch_list:
+            TrialNumber += 1
+
+            # Creating the classifier model
+            classifier = tf.keras.Sequential()
+            classifier.add(tf.keras.layers.Dense(units=20, input_dim=19, kernel_initializer='uniform', activation='relu'))
+            classifier.add(tf.keras.layers.Dense(units=20, kernel_initializer='uniform', activation='relu'))
+            classifier.add(tf.keras.layers.Dense(units=10, kernel_initializer='uniform', activation='relu'))
+            classifier.add(tf.keras.layers.Dense(units=2, kernel_initializer='uniform', activation='softmax'))
+            classifier.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+
+            classifier.fit(x_train, y_train, batch_size=batch_size_trial, epochs=epochs_trial,
+                                               verbose=0)
+            # Fetching the accuracy of the training
+            Accuracy = classifier.evaluate(x_test, y_test)
+
+            # printing the results of the current iteration
+            print(TrialNumber, 'Parameters:', 'batch_size:', batch_size_trial, '-', 'epochs:', epochs_trial,
+                  'Accuracy:', Accuracy)
+
+            SearchResultsData = SearchResultsData.append(pd.DataFrame(data=[[TrialNumber,
+                                                                             'batch_size' + str(
+                                                                                 batch_size_trial) + '-' + 'epoch' + str(
+                                                                                 epochs_trial), Accuracy]],
+                                                                      columns=['TrialNumber', 'Parameters',
+                                                                               'Accuracy']))
+    return (SearchResultsData)
+
+
+ResultsData = FunctionFindBestParams(x_train, y_train)
+
+#Rebuild optimal Classifier
+model.add(keras.layers.Dense(units=20, input_dim=19, activation='relu'))
+model.add(keras.layers.Dense(units=30, activation='relu'))
+model.add(keras.layers.Dense(units=15, activation='relu'))
+model.add(keras.layers.Dense(units=2, activation='softmax'))
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+model.fit(x_train, y_train, batch_size=20, epochs=4)
+print(model.evaluate(x_test, y_test))
+
 
 
 
